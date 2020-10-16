@@ -1,0 +1,153 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LINQ_play
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int width = 3;
+            int height = 4;
+            string line = "000..000.000";
+            char[] code = line.ToCharArray();
+            List<CoordXY> Node = new List<CoordXY>();
+
+            for (int j = 0; j < (height * width); j++)
+            {
+                if (code[j].Equals('0'))
+                {
+                    Node.Add(new CoordXY() { x = (j % width), y = (j / width) });
+                }
+                else
+                {
+                    Node.Add(new CoordXY() { x = -1, y = -1 });
+                }
+            }
+            // Generates Node coordinate system or Void (-1 -1)
+
+
+
+
+            /*for (int k = 0; k < height*width; k++)
+            {
+                string right = "";
+                try
+                {
+                    if (Node[k + 1].y == Node[k].y && Node[k+1].x == (Node[k].x+1))
+                    {
+                        right = Node[k + 1].ValueXY;
+                    }
+                    else right = "-1 -1";
+                }
+                catch
+                {
+                    right = "-1 -1";
+                }
+                string below = "";
+                try 
+                {
+                    if (Node[k].x == Node[k+width].x)
+                {
+                    below = Node[k].x + " " + (Node[k].y+1);
+                }
+                    else below = "-1 -1";
+                }
+                catch
+                {
+                    below = "-1 -1";
+                }
+
+
+                if (Node[k].ValueXY != "-1 -1")
+                {
+                    Console.WriteLine(Node[k].ValueXY + " " + right + " " + below);
+                }
+                
+            }
+            */
+            //Mostly working Logic processor for problem suffers from only checking +1 in each direction.
+
+            for (int i = 0; i < Node.Count(); i++)
+            {
+                string result = "";
+                try
+                {
+                    var right = Node.Where(p => p.y == Node[i].y && p.x > Node[i].x).First(y => y.x > 0 && y.y >= Node[i].y);
+                    if (Node[i].ValueXY != "-1 -1")
+                    {
+                        result = Node[i].ValueXY + " " + right.ValueXY;
+                    }
+                }
+                catch 
+                {
+                    if (Node[i].ValueXY != "-1 -1")
+                    {
+                        result = Node[i].ValueXY + " " + "-1 -1";
+                    }
+                }
+                /*try
+                {
+                    var bottom = Node.Where(p => p.x == Node[i].x && p.y > Node[i].y).First(y => y.y > 0 && y.x >= Node[i].x);
+                    if (Node[i].ValueXY != "-1 -1")
+                    {
+                        result += " " + bottom.ValueXY;
+                    }
+                }
+                catch
+                {
+                    if (Node[i].ValueXY != "-1 -1")
+                    {
+                        result += " " + "-1 -1";
+                    }
+                }*/
+                Console.WriteLine(result);
+            }
+            //var rightx = Node.Where(p => p.y == p.y && p.x > p.x).First(y => y.x > 0);
+            //Console.WriteLine(rightx.ValueXY);
+            /*foreach(string item in right)
+            {
+                Console.WriteLine(item);
+            }
+            */
+            
+            
+            /*foreach (var value in Node)
+            {
+                Console.WriteLine(value.ValueXY);
+            }*/
+            
+            //Console.WriteLine(Node[3].ValueXY);
+            
+
+            Console.ReadLine();
+        }
+        
+    }
+    class CoordXY
+    {
+        
+        public string ValueXY
+        {
+            get { return x + " " + y; }
+            set { ValueXY = value; }
+        }
+        public int x
+        {
+            get;
+            set;
+        }
+
+        public int y
+        {
+            get;
+            set;
+        }
+        
+
+    }
+}
