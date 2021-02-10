@@ -1,0 +1,188 @@
+using System;
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Solution
+{
+    static void Main(string[] args)
+    {
+        int N = int.Parse(Console.ReadLine());
+        List<Resistor> resistors = new List<Resistor>();
+        for (int i = 0; i < N; i++)
+        {
+            string[] inputs = Console.ReadLine().Split(' ');
+            resistors.Add(new Resistor{Name = inputs[0],Resistance = int.Parse(inputs[1])});
+        }
+        // Read Circuit input
+        string circuit = Console.ReadLine();
+        //Console.WriteLine(circuit); // Debug
+        
+        // Convert names in circuit to Resistance Numbers
+
+        circuit = Converter.NameToResistance(resistors, circuit);
+        //Console.WriteLine(circuit); // Debug
+
+
+        //Debug BracketFind Check
+        //Console.WriteLine(BracketToReplace.FindSquareBracket(circuit));
+        //Console.WriteLine(BracketToReplace.FindBracket(circuit));
+
+        //Test to see how many times the while loops
+        //int ctr = 0;
+        
+             
+        //while(BracketToReplace.FindBracket(circuit)!=null && BracketToReplace.FindSquareBracket(circuit)!=null)
+        while("()[]".IndexOfAny(circuit.ToCharArray())>=0)
+        {
+        // Debug: WhileLoop Check
+        // ctr++;
+        // Console.WriteLine(ctr);
+        string currentB = BracketToReplace.FindBracket(circuit);
+        string currentSquareB = BracketToReplace.FindSquareBracket(circuit);
+        
+        // Replace Brackets if there are some left and without Square Brackets in
+        // Using string.Replace(old,new) and string.Format to ensure it is replaced correctly.
+        if (currentB!=null && "()".IndexOfAny(circuit.ToCharArray())>=0)
+        {
+            circuit = circuit.Replace(currentB,string.Format($"{Calculator.Series(currentB):f1}"));
+        }
+
+        // Replace Square Brackets if there are some left and without Brackets in
+        if (currentSquareB!=null && "[]".IndexOfAny(circuit.ToCharArray())>=0)
+        {
+            circuit = circuit.Replace(currentSquareB,string.Format($"{Calculator.Parallel(currentSquareB):f1}"));
+        }
+        
+        }
+        Console.WriteLine(circuit);
+       
+    }
+}
+// Resistor Class to store the inputs temporarily
+public class Resistor
+{
+    public string Name {get; set;}
+    public int Resistance {get; set;}
+}
+// Converter Class to move from named circuit format to resistance numbers
+public static class Converter
+{
+public static string NameToResistance(List<Resistor> resistors,string circuit)
+{
+
+foreach(var r in resistors)
+{
+    circuit = circuit.Replace($"{r.Name}",$"{r.Resistance}");
+}
+return circuit;
+}
+}
+
+// Calculator strips away useless information within the bracket selection and does the calculation
+public static class Calculator
+{
+    public static double Series(string bracket)
+        {
+            double output = 0;
+            string[] items = bracket.Split(new char[]{' ','(',')','[',']'},StringSplitOptions.RemoveEmptyEntries);
+            output = items.Sum(p=>double.Parse(p));
+            return output;
+        }
+         public static double Parallel(string bracket)
+        {
+            double output = 0;
+            string[] items = bracket.Split(new char[]{' ','(',')','[',']'},StringSplitOptions.RemoveEmptyEntries);
+            //Console.WriteLine(String.Join(',',items)); // Debug
+            output = 1/items.Sum(p=>1/double.Parse(p));
+            return output;
+        }
+}
+// Searches for a single set of brackets, returning one entry or null.
+public static class BracketToReplace
+{
+    public static string FindBracket(string input)
+        {
+            if("()".IndexOfAny(input.ToCharArray())<0)
+            {
+                return "";
+            }
+            int startPoint = 0;
+            int endPoint = input.Length;
+            int OpenBracket = 0;
+            int CloseBracket = 0;
+            for(int i = 0; i<input.Length;i++)
+            {
+                if (input[i]=='(')
+                {
+                    OpenBracket++;
+                    startPoint = i;
+                }
+                else if (input[i]==')')
+                {
+                    CloseBracket++;
+                    endPoint = i;
+                    break;
+                }
+                if (OpenBracket>1)
+                {
+                    OpenBracket--;
+                    startPoint = i;
+                }
+            }
+            if ("[]".IndexOfAny(input.Substring(startPoint,endPoint-startPoint+1).ToCharArray())>=0)
+            {
+                return null;
+            }
+            else
+            {
+                return input.Substring(startPoint,endPoint-startPoint+1);
+            }
+        }
+        public static string FindSquareBracket(string input)
+        {
+            if("[]".IndexOfAny(input.ToCharArray())<0)
+            {
+                return null;
+            }
+            int startPoint = 0;
+            int endPoint = input.Length;
+            int OpenBracket = 0;
+            int CloseBracket = 0;
+            for(int i = 0; i<input.Length;i++)
+            {
+                if (input[i]=='[')
+                {
+                    OpenBracket++;
+                    startPoint = i;
+                }
+                else if (input[i]==']')
+                {
+                    CloseBracket++;
+                    endPoint = i;
+                    break;
+                }
+                if (OpenBracket>1)
+                {
+                    OpenBracket--;
+                    startPoint = i;
+                }
+            }
+            string output = input.Substring(startPoint,endPoint-startPoint+1);
+            if ("()".IndexOfAny(input.Substring(startPoint,endPoint-startPoint+1).ToCharArray())>=0)
+            {
+                return null;
+            }
+            else
+            {
+                return input.Substring(startPoint,endPoint-startPoint+1);
+            }
+            
+        }
+}
