@@ -183,6 +183,6 @@ public static class BracketToReplace
             {
                 return input.Substring(startPoint,endPoint-startPoint+1);
             }
-            
+            // Just a test
         }
 }
